@@ -1,3 +1,13 @@
 body {
     background-color: rgb(21, 12, 59);
 }
+
+.header-slider
+{
+    min-width: 100%;
+    min-height: 100%;
+}
+
+.header-slider ul {
+
+}
