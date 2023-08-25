@@ -1,0 +1,33 @@
+body {
+    background-color: rgb(19, 15, 58);
+}
+
+.button {
+    display: inline-block;
+    cursor: pointer;
+    text-decoration: none;
+    color: var(--text-primary);
+    border: 2px solid var(--accent);
+    padding: .5em 1em;
+
+    position: relative;
+    isolation: isolate;
+}
+
+.button::after {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    background-color: var(--accent);
+    inset: 0;
+
+    scale: 0 1;
+    transform-origin: right;
+    transition: scale 450ms;
+}
+
+.button:hover:after,
+.button:focus-visible:after {
+    transform-origin: left;
+    scale: 1 1;
+}
