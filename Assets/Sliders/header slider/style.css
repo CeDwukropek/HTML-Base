@@ -1,34 +1,13 @@
-.header-slider,
-.header-slider ul {
+body {
+    background-color: rgb(21, 12, 59);
+}
+
+.header-slider
+{
     min-width: 100%;
-    min-height: min(50rem, 100vh);
+    min-height: 100%;
 }
 
-.header-slider li {
-    width: 100%;
-    height: 100%;
-}
+.header-slider ul {
 
-.header-slider li img {
-    object-position: top;
-}
-
-.h-nav {
-    right: 16px;
-    top: 50%;
-    translate: 0 -50%;
-}
-
-.h-nav-dot {
-    width: 10px;
-    aspect-ratio: 1 / 1;
-    background: #fff;
-    opacity: .5;
-    border-radius: 50%;
-    margin: 10px auto;
-}
-
-.h-nav .h-nav-dot.active {
-    width: 16px;
-    opacity: 1;
 }
