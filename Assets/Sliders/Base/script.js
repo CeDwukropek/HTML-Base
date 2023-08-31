@@ -1,9 +1,9 @@
 
 
-class placeholder {
+class Placeholder {
     constructor(el) {
         this.el = el
     }
 }
 
-placeholder(document.querySelector())
+const placeholder = new Placeholder(document.querySelector('.slider'))
