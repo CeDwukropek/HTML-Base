@@ -19,6 +19,8 @@
     --line-height-heading: 1.2em;
 
     --global-padding: 15vw;
+    --div-max-width: 35rem;
+    --border-min-width: 1rem;
 }
 
 /* Default styling */
@@ -214,6 +216,24 @@ hr {
 
 .even-columns { grid-template-columns: repeat(auto-fit, minmax(15em, 1fr)); }
 
+@media screen and (min-width: 600px)
+{
+    .side-by-side {
+        grid-template-columns:
+        minmax(var(--border-min-width), 1fr)
+        minmax(0, var(--div-max-width))
+        minmax(0, var(--div-max-width))
+        minmax(var(--border-min-width), 1fr);
+    }
+
+    .side-by-side .img {
+        grid-area: 1 / 3;
+    }
+
+    .side {
+        height: 400px;
+    }
+}
 
 /* gaps */
 
