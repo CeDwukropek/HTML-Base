@@ -6,6 +6,10 @@
     --accent: #00c7d0;
 
     --text-primary: #696969;
+
+    --wrapper-padding-inline: 1rem;
+    --max-slides: 6;
+    --wrapper-gap: 2rem;
 }
 
 h1 {
@@ -41,37 +45,62 @@ p {
 
 body {
     min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--wrapper-padding-inline);
     margin: 0;
-    padding: 300px;
 }
 
 .slider {
     display: flex;
     position: relative;
     flex-direction: column;
-    position: relative;
     overflow: hidden;
     padding-bottom: 100px;
+    max-width: 80rem;
 }
 
 .slider .wrapper {
-    display: flex;
+    display: grid;
     position: relative;
-    align-items: center;
-    left: var(--offset);
-    gap: 2rem;
-    transition: left 1s;
-    padding-bottom: 2rem;
+    grid-auto-flow: column;
+    grid-auto-columns: calc(100% / 4 - calc(var(--wrapper-gap) * .75));
+    gap: var(--wrapper-gap);
+    padding-bottom: var(--wrapper-gap);
+    overflow-x: scroll;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    scroll-behavior: smooth;
+}
+
+@media screen and (max-width: 1200px)
+{
+    .slider .wrapper {
+        grid-auto-columns: calc(100% / 3 - calc(var(--wrapper-gap) * .75));
+    }
+}
+
+@media screen and (max-width: 600px)
+{
+    .slider .wrapper {
+        grid-auto-columns: calc(100% / 2 - calc(var(--wrapper-gap) * .75));
+    }
+}
+
+.slider .wrapper::-webkit-scrollbar {
+    display: none;
 }
 
 .slider .wrapper .item {
-    width: 300px;
-    position: relative;
     flex-shrink: 0;
     overflow: hidden;
+    scroll-snap-align: end;
     box-shadow:
-        0px 90px 63px -66px rgba(0, 0, 0, 0.05),
-        0px 100px 63px -66px rgba(0, 0, 0, 0.1);
+        0px 1.4px 3.1px -60px rgba(0, 0, 0, 0.07),
+        0px 4px 8.6px -60px rgba(0, 0, 0, 0.1),
+        0px 9.6px 20.8px -60px rgba(0, 0, 0, 0.13),
+        0px 32px 69px -60px rgba(0, 0, 0, 0.2);
 }
 
 .slider .wrapper .item img {
@@ -132,12 +161,12 @@ body {
     z-index: 1;
 }
 
-.slider .nav .active-dot {
+.slider .nav .dot.active {
     width: 16px;
     height: 16px;
 }
 
-.slider .nav .active-dot::after {
+.slider .nav .dot.active::after {
     content: '';
     position: absolute;
     inset: 3px;

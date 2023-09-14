@@ -1,6 +1,6 @@
 
 
-class Slider {
+class Slider1 {
     constructor(el) {
         this.el = el
         this.wrapper = el.querySelector('.wrapper')
@@ -78,6 +78,40 @@ class Slider {
 
         this.dots[this.index].classList.add('active-dot')
         this.dots[this.dots.length - 1].classList.add('last-dot')
+    }
+}
+
+class Slider {
+    constructor(el) {
+        this.slider = el;
+        this.wrapper = el.querySelector('.wrapper')
+        this.dots = [...el.querySelectorAll('.dot')]
+        this.numberOfItems = [...el.querySelectorAll('.item')].length
+        this.itemWidth = el.querySelector('.item').offsetWidth
+        this.gap = Number(getComputedStyle(document.documentElement).getPropertyValue('--wrapper-gap').replace(/[^0-9]/g, ''));
+        this.wrapperRealWidth = this.itemWidth * this.numberOfItems + this.gap * (this.numberOfItems - 1)
+
+        console.log('this.dots :>> ', this.dots);
+        
+        this.dots.forEach(dot => {
+            dot.addEventListener("click", e => {
+                this.handleActiveDot(e.target)
+                this.scrollToDot(e.target)
+            })
+        })
+    }
+
+    // scrolling based on amount of dots, eg. 2nd dot => 50% scroll
+    scrollToDot(dot) {
+        let offset = this.itemWidth * this.dots.indexOf(dot)
+        this.wrapper.scrollLeft = offset
+    }
+
+    handleActiveDot(clickedDot) {
+        this.dots.forEach(dot => {
+            dot.classList.remove('active')
+        })
+        clickedDot.classList.add('active')
     }
 }
 
