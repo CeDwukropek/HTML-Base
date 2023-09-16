@@ -81,10 +81,17 @@ body {
     }
 }
 
-@media screen and (max-width: 600px)
+@media screen and (max-width: 850px)
 {
     .slider .wrapper {
         grid-auto-columns: calc(100% / 2 - calc(var(--wrapper-gap) * .75));
+    }
+}
+
+@media screen and (max-width: 550px)
+{
+    .slider .wrapper {
+        grid-auto-columns: calc(100% / 1 - calc(var(--wrapper-gap) * .75));
     }
 }
 
@@ -104,6 +111,8 @@ body {
 }
 
 .slider .wrapper .item img {
+    width: 100%;
+    object-fit: cover;
     height: 200px;
 }
 
