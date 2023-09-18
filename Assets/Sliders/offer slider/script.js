@@ -18,6 +18,7 @@ class Slider {
 
     // TODO: infinite carusel
     // TODO: auto-play
+    
 
     setGap() {
         // taking bdy font size in px
