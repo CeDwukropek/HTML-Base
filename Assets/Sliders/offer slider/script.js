@@ -1,19 +1,16 @@
 
 
 class Slider {
-    constructor(el, itemsAmount = 4) {
-        this.slider = el;
+    constructor(el) {
+        this.el = el
         this.wrapper = el.querySelector('.wrapper')
-        this.dots = [...el.querySelectorAll('.dot')]
-        this.numberOfItems = [...el.querySelectorAll('.item')].length
-        this.itemWidth = el.querySelector('.item').offsetWidth
-        this.itemsAmount = itemsAmount
-        this.clickedDotIndex = 0
+        this.itemSize = el.querySelectorAll('.item')[0].offsetWidth
+        this.itemsAmount = el.querySelectorAll('.item').length
+        this.dots = Array.from(el.querySelector('.nav').querySelectorAll('.dot'))
+        this.bodyFontSize = Number(window.getComputedStyle(document.querySelector('body')).fontSize.split('px')[0])
+        this.index = 0
         
-        this.setGap()
         this.resize()
-
-        window.addEventListener("resize", () => this.resize())
     }
 
     // TODO: infinite carusel
@@ -25,94 +22,75 @@ class Slider {
         const bodyFontSize = window.getComputedStyle(this.slider, null).getPropertyValue('font-size').replace(/[^0-9]/g, '')
         // taking wrapper font size from REM value and calculate it to pixels
         this.gap = Number(getComputedStyle(document.documentElement).getPropertyValue('--wrapper-gap').replace(/[^0-9]/g, '')) * bodyFontSize
+
+    setOffset() {
+        this.wrapper.style.setProperty('--offset', -1 * this.index * (this.itemSize + 2 * this.bodyFontSize) + 'px')
+
     }
 
-    handleDotsClicking() {
+    changeSlide() {
         this.dots.forEach(dot => {
             dot.addEventListener("click", e => {
-                this.setActiveDot(e.target)
-                this.scrollToDot(e.target)
+                e.preventDefault()
+                this.dots.forEach(element => {
+                    element.classList.remove('active-dot')
+                });
+
+                dot.classList.add('active-dot')
+
+                this.index = this.dots.indexOf(dot)
+
+                this.setOffset()
             })
         })
     }
 
-    scrollToDot(dot) {
-        let offset = (this.itemWidth + this.gap) * this.dots.indexOf(dot) * this.itemsToScroll
-        this.wrapper.scrollLeft = offset
-    }
-
-    setActiveDot(clickedDot = this.dots[this.dots.length - 1]) {
-        this.dots.forEach(dot => {
-            dot.classList.remove('active')
+    events() {
+        window.addEventListener('resize', () => {
+            this.resize()
         })
-        clickedDot.classList.add('active')
-        this.clickedDotIndex = this.dots.indexOf(clickedDot)
     }
 
-    calcDotsNumber() {
-        // when we calculate dots we need to omit items on first slide,
-        // because they'll be taken as additional slide
-        // e.g. itemsAmount = 2
-        // ([][])[][]
-        // e.g. itemsAmount = 3
-        // ([][][])[]
-        // we want to ignore first two items, so we substract them from items on screen
-        let items = (this.calcNumberOfItems() - this.itemsToScroll)
-        // and return how many slides we need to take care of
-        // TODO: round returned number
-        return Number(((this.numberOfItems - items) / this.itemsToScroll).toFixed(1))
+    maxSlidesCounter() {
+        return Math.floor(this.elSize / (this.itemSize + 2 * this.bodyFontSize))
     }
 
-    // calculating how many items can fit in wrapper
-    calcNumberOfItems() {
-        return Math.floor(this.wrapper.offsetWidth / this.itemWidth)
+    resize() {
+        this.elSize = (this.el).offsetWidth
+        this.maxSlides = this.maxSlidesCounter()
+        this.dotsAmount = this.itemsAmount - this.maxSlides + 1
+
+        this.index = this.index >= this.dotsAmount ? this.dotsAmount - 1 : this.index
+
+        console.log('this.index :>> ', this.index);
+        console.log('this.dotsAmount :>> ', this.dotsAmount);
+
+        this.createDots(this.dotsAmount)
+        this.changeSlide()
+        this.setOffset()
+        this.events()
     }
     
-    createDots(number) {
-        const nav = this.slider.querySelector('.nav')
-        
-        //TODO: instead of removing and creating all dots, create missing ones or remove additional
+    createDots(amount) {
+        const nav = this.el.querySelector('.nav')
 
-        // delete all dots
         nav.querySelectorAll('.dot').forEach(dot => {
             nav.removeChild(dot)
         })
 
-        // and create new ones
-        for (let i = 0; i < number; i++) {
-            const div = document.createElement("div")
-            div.classList.add('dot')
-            nav.appendChild(div)
-        }
-        
-        this.dots = [...nav.querySelectorAll('.dot')]
-        // check if last clicked dots index is out of range
-        this.clickedDotIndex = this.clickedDotIndex >= this.dots.length ? this.dots.length - 1 : this.clickedDotIndex
-        this.dots[this.clickedDotIndex].classList.add('active')
-
-        this.handleDotsClicking()
-    }
-
-    // update all necessary variables
-    resize() {
-        if(window.innerWidth > 1200) {
-            this.itemsToScroll = this.itemsAmount
-        } else if(window.innerWidth > 850 && window.innerWidth <= 1200) {
-            this.itemsToScroll = this.itemsAmount - 1 <= 0 ? 1 : this.itemsAmount - 1
-        } else if(window.innerWidth > 550 && window.innerWidth <= 850){
-            this.itemsToScroll = this.itemsAmount - 2 <= 0 ? 1 : this.itemsAmount - 2
-        } else {
-            this.itemsToScroll = this.itemsAmount - 3 <= 0 ? 1 : this.itemsAmount - 3
+        for (let i = 0; i < amount; i++) {
+            const a = document.createElement("a")
+            a.href = '#'
+            a.classList.add('dot')
+            nav.appendChild(a)
         }
 
-        this.itemWidth = this.slider.querySelector('.item').offsetWidth
-        this.wrapper = this.slider.querySelector('.wrapper')
-        this.numberOfItems = [...this.slider.querySelectorAll('.item')].length
-        
-        this.createDots(this.calcDotsNumber())
-        this.scrollToDot(this.dots[this.clickedDotIndex])
+        this.dots = Array.from(nav.querySelectorAll('.dot'))
+
+        this.dots[this.index].classList.add('active-dot')
+        this.dots[this.dots.length - 1].classList.add('last-dot')
     }
 }
 
-const slider = new Slider(document.querySelector('.slider'), 4)
+const slider = new Slider(document.querySelector('.slider'))
 
