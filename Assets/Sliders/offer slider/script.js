@@ -1,6 +1,6 @@
 
 class Slider {
-    constructor(el) {
+    constructor(el, itemsAmount = 4) {
         this.slider = el;
         this.wrapper = el.querySelector('.wrapper')
         this.dots = [...el.querySelectorAll('.dot')]
@@ -9,16 +9,16 @@ class Slider {
         this.fontSize = window.getComputedStyle(el, null).getPropertyValue('font-size').replace(/[^0-9]/g, '')
         this.gap = Number(getComputedStyle(document.documentElement).getPropertyValue('--wrapper-gap').replace(/[^0-9]/g, '')) * this.fontSize
         this.wrapperRealWidth = this.itemWidth * this.numberOfItems + this.gap * (this.numberOfItems - 1)
-        this.deviceMultiplier = 1;
+        this.itemsToSlide = itemsAmount;
+        this.itemsAmount = itemsAmount
         this.clickedDotIndex = 0
         
         this.resize()
-        this.handleClicking()
 
         window.addEventListener("resize", () => this.resize())
     }
 
-    handleClicking() {
+    handleDotClicking() {
         this.dots.forEach(dot => {
             dot.addEventListener("click", e => {
                 this.handleActiveDot(e.target)
@@ -27,9 +27,8 @@ class Slider {
         })
     }
 
-    // scrolling based on amount of dots, eg. 2nd dot => 50% scroll
     scrollToDot(dot) {
-        let offset = (this.itemWidth + this.gap) * this.dots.indexOf(dot) * this.deviceMultiplier
+        let offset = (this.itemWidth + this.gap) * this.dots.indexOf(dot) * this.itemsToSlide
         this.wrapper.scrollLeft = offset
     }
 
@@ -42,27 +41,35 @@ class Slider {
     }
 
     calcDotsNumber() {
-        return ((this.numberOfItems * (this.itemWidth + this.gap) - 2 * this.gap) / this.wrapper.offsetWidth).toFixed(1)
+        // when we calculate dots we need to omit items that we can see on screen
+        // so we substract items that should be ignored
+        let items = (this.calcNumberOfItems() - this.itemsToSlide)
+        // and return how many slides we need to take care of
+        return Number(((this.numberOfItems - items) / this.itemsToSlide).toFixed(1))
+    }
+
+    // calculating how many items can fit in wrapper
+    calcNumberOfItems() {
+        return Math.floor(this.wrapper.offsetWidth / this.itemWidth)
     }
 
     resize() {
-        if(document.body.clientWidth >= 1920) {
-            this.deviceMultiplier = 4
-        } else if(document.body.clientWidth > 1200 && document.body.clientWidth < 1920) {
-            this.deviceMultiplier = 3
-        } else if(document.body.clientWidth > 550 && document.body.clientWidth < 1200) {
-            this.deviceMultiplier = 2
-        } else{
-            this.deviceMultiplier = 1
+        if(window.innerWidth > 1200) {
+            this.itemsToSlide = this.itemsAmount
+        } else if(window.innerWidth > 850 && window.innerWidth <= 1200) {
+            this.itemsToSlide = this.itemsAmount - 1 <= 0 ? 1 : this.itemsAmount - 1
+        } else if(window.innerWidth > 550 && window.innerWidth <= 850){
+            this.itemsToSlide = this.itemsAmount - 2 <= 0 ? 1 : this.itemsAmount - 2
+        } else {
+            this.itemsToSlide = this.itemsAmount - 3 <= 0 ? 1 : this.itemsAmount - 3
         }
 
         this.itemWidth = this.slider.querySelector('.item').offsetWidth
         this.wrapper = this.slider.querySelector('.wrapper')
         this.numberOfItems = [...this.slider.querySelectorAll('.item')].length
-
+        
         this.createDots(this.calcDotsNumber())
         this.scrollToDot(this.dots[this.clickedDotIndex])
-        this.handleClicking()
     }
     
     createDots(number) {
@@ -81,7 +88,9 @@ class Slider {
         this.dots = [...nav.querySelectorAll('.dot')]
         this.clickedDotIndex = this.clickedDotIndex >= this.dots.length ? this.dots.length - 1 : this.clickedDotIndex
         this.dots[this.clickedDotIndex].classList.add('active')
+
+        this.handleDotClicking()
     }
 }
 
-const slider = new Slider(document.querySelector('.slider'))
+const slider = new Slider(document.querySelector('.slider'), 4)
