@@ -97,6 +97,9 @@ body {
     .slider .wrapper {
         grid-auto-columns: calc(100% / 1 - calc(var(--wrapper-gap) * .75));
     }
+    .slider .wrapper .item {
+        scroll-snap-align: center;
+    }
 }
 
 .slider .wrapper::-webkit-scrollbar {
@@ -106,7 +109,7 @@ body {
 .slider .wrapper .item {
     flex-shrink: 0;
     overflow: hidden;
-    scroll-snap-align: center;
+    scroll-snap-align: end;
     box-shadow:
         0px 1.4px 3.1px -60px rgba(0, 0, 0, 0.07),
         0px 4px 8.6px -60px rgba(0, 0, 0, 0.1),
