@@ -13,8 +13,19 @@ class Slider {
         this.resize()
     }
 
+    // TODO: infinite carusel
+    // TODO: auto-play
+    
+
+    setGap() {
+        // taking bdy font size in px
+        const bodyFontSize = window.getComputedStyle(this.slider, null).getPropertyValue('font-size').replace(/[^0-9]/g, '')
+        // taking wrapper font size from REM value and calculate it to pixels
+        this.gap = Number(getComputedStyle(document.documentElement).getPropertyValue('--wrapper-gap').replace(/[^0-9]/g, '')) * bodyFontSize
+
     setOffset() {
         this.wrapper.style.setProperty('--offset', -1 * this.index * (this.itemSize + 2 * this.bodyFontSize) + 'px')
+
     }
 
     changeSlide() {
